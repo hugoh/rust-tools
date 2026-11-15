@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#MISE description="Run tests and check coverage"
+#MISE depends=[[ (["prebuild"] if has_prebuild else []) | tojson ]]
+# DO NOT EDIT — managed by hugoh/rust-tools via copier. The line-coverage gate and the files
+# left out of it are COVERAGE_MIN_LINES and COVERAGE_IGNORE_REGEX in .config/mise/conf.d/coverage.toml.
+set -euo pipefail
+cargo llvm-cov nextest --all-features --fail-under-lines "$COVERAGE_MIN_LINES" \
+  --ignore-filename-regex "$COVERAGE_IGNORE_REGEX" --lcov --output-path "$COVEROUT"
+{
+  echo '```'
+  cargo llvm-cov report --ignore-filename-regex "$COVERAGE_IGNORE_REGEX" --summary-only
+  echo '```'
+} | tee -a "${GITHUB_STEP_SUMMARY:-/dev/null}"

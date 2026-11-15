@@ -17,6 +17,11 @@ for fixture in test/fixtures/*.yml; do
   python3 -I -c "import tomllib,sys; [tomllib.load(open(f,'rb')) for f in sys.argv[1:]]" \
     "$out/deny.toml" "$out/rust-toolchain.toml" "$out/mise.toml"
   python3 -I -c "import json,sys; json.load(open(sys.argv[1]))" "$out/.markdownlint.json"
+  while IFS= read -r task; do
+    bash -n "$task"
+    [ -x "$task" ] || { echo "$task is not executable" >&2; exit 1; }
+  done < <(find "$out/mise-tasks" -type f)
+  python3 -I -c "import tomllib,sys; tomllib.load(open(sys.argv[1],'rb'))" "$out/.config/mise/conf.d/coverage.toml"
   rm -rf "$out"
   echo "ok: $fixture"
 done

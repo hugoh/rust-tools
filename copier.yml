@@ -15,6 +15,7 @@ _envops:
 _skip_if_exists:
   - rust-toolchain.toml
   - deny.toml
+  - .config/mise/conf.d/coverage.toml
   - .renovaterc.json
 
 project_name:
@@ -30,3 +31,18 @@ toolchain_targets:
   type: json
   default: ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin"]
   help: "Targets installed by rust-toolchain.toml: list of target triples"
+
+has_prebuild:
+  type: bool
+  default: false
+  help: "The project generates files it embeds but does not commit (a prebuild mise task that build, dev, coverage and lint:rust depend on)"
+
+build_extra_sources:
+  type: json
+  default: []
+  help: "Source globs besides src/ and Cargo files that should trigger a rebuild (e.g. vendored web assets): list of strings"
+
+ci_test_extra_depends:
+  type: json
+  default: []
+  help: "Repo-specific mise tasks that ci:test runs after coverage and crap: list of task names"

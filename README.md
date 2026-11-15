@@ -4,11 +4,15 @@ Shared tooling for [hugoh](https://github.com/hugoh)'s Rust repositories (`tamis
 
 ## Copier template
 
-Templates `.cargo/config.toml`, `.cargo-crap.toml`, `clippy.toml`, `hk.pkl`, `mise.toml` (+ `mise.package.toml`, `mise.release.toml`), `biome.jsonc`, `.jscpd.json`, `.markdownlint.json`, `.ryl.toml`, `.editorconfig`, and `.github/workflows/semantic-pr.yml`.
+Templates the config files the Rust repos share: `.cargo/config.toml`, `.cargo-crap.toml`, `clippy.toml`, `hk.pkl`, `mise.toml` (+ `mise.package.toml`, `mise.release.toml`), `biome.jsonc`, `.jscpd.json`, `.markdownlint.json`, `.ryl.toml`, `.editorconfig` and `.github/workflows/semantic-pr.yml`.
 
-Seeded once, then owned by the repo (`_skip_if_exists`): `rust-toolchain.toml`, `deny.toml` and `.renovaterc.json`. Their content tracks the repo (targets, the dependency tree's licenses and advisories), so a template would only move that data into `.copier-answers.yml`.
+It also templates the mise tasks that are the same in every repo: `build`, `dev`, `clean`, `fix`, `ci`, `ci:test`, `coverage`, `crap` (+ `crap:baseline`, `crap:fetch`, `crap:top`), `deps:upgrade`, `lint:rust` and `lint:release`. Repo differences are three variables: `has_prebuild` (a `prebuild` task that `build`, `dev`, `coverage` and `lint:rust` depend on), `build_extra_sources` (extra globs that trigger a rebuild) and `ci_test_extra_depends` (extra tasks `ci:test` runs).
 
-Not templated, on purpose (too repo-specific until a third Rust project shows what varies): `.anodizer.yaml`, `cross.yml`, `pages.yml`, `mise-tasks/`, and the release jobs of `ci.yml`.
+The coverage gate and the files left out of it are not variables: they track the repo's source tree, so they live in `.config/mise/conf.d/coverage.toml` (`COVERAGE_MIN_LINES`, `COVERAGE_IGNORE_REGEX`), which is seeded once.
+
+Seeded once, then owned by the repo (`_skip_if_exists`): `rust-toolchain.toml`, `deny.toml`, `.config/mise/conf.d/coverage.toml` and `.renovaterc.json`. Their content tracks the repo (targets, the dependency tree's licenses and advisories, the source files), so a template would only move that data into `.copier-answers.yml`.
+
+Not templated, on purpose (repo-specific): `.anodizer.yaml`, `cross.yml`, `pages.yml`, the release jobs of `ci.yml`, and the tasks that chain a repo's own checks (`lint`, `test`) or exist in one repo only (`cross`, `site`, `web:*`, `test:e2e`, ...).
 
 ### Adopting in an existing repo
 
