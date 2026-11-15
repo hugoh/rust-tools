@@ -36,6 +36,8 @@ jobs:
     permissions: {actions: read, contents: read}
 ```
 
+`rust-hk.yml` takes `prebuild: true` to run `mise run prebuild` first; `rust-test.yml` takes `setup-command` to run a shell command (such as starting a service) before the tests.
+
 Calling a reusable workflow changes the check names (`hk` becomes `hk / hk`): re-run `repo-admin.sh sync <repo>` so branch protection requires the new names.
 
 ## Renovate
