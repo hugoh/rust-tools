@@ -6,6 +6,11 @@ min_hk_version = Base.min_hk_version
 
 local linters = new Mapping<String, Step> {
   ...Base.base
+  ...Base.python
+  // ty needs the test dependencies importable to resolve copier, pytest and yaml
+  ["ty"] = (Builtins.ty) {
+    check = "uv venv --quiet --clear --python 3.12 .cache/ty-venv && uv pip install --quiet --python .cache/ty-venv -r test/render-check-requirements.txt && ty check --python .cache/ty-venv {{files}}"
+  }
 }
 
 steps = linters
