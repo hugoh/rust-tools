@@ -46,3 +46,13 @@ ci_test_extra_depends:
   type: json
   default: []
   help: "Repo-specific mise tasks that ci:test runs after coverage and crap: list of task names"
+
+lint_extra_depends:
+  type: json
+  default: []
+  help: "Repo-specific mise tasks that lint runs besides lint:rust and lint:release: list of task names"
+
+test_extra_depends:
+  type: json
+  default: []
+  help: "Repo-specific mise tasks that test runs first, besides prebuild (see has_prebuild): list of task names"

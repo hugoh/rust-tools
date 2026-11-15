@@ -4,3 +4,5 @@ toolchain_targets: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu, aarch64
 has_prebuild: true
 build_extra_sources: ["web/static/vendor/*"]
 ci_test_extra_depends: ["test:js"]
+lint_extra_depends: ["lint:package", "lint:systemd"]
+test_extra_depends: ["test:js"]

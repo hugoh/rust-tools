@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run tests"
+#MISE depends=[[ ((["prebuild"] if has_prebuild else []) + test_extra_depends) | tojson ]]
+# DO NOT EDIT — managed by hugoh/rust-tools via copier.
+cargo nextest run --all-features
