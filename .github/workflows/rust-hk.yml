@@ -2,7 +2,12 @@
 name: rust-hk
 
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      prebuild:
+        type: boolean
+        default: false
+        description: "Run `mise run prebuild` before hk, for repos that embed files they do not commit"
 
 jobs:
   hk:
@@ -26,6 +31,8 @@ jobs:
         with:
           shared-key: lint
           save-if: ${{ github.ref == 'refs/heads/main' }}
+      - if: inputs.prebuild
+        run: mise run prebuild
       - uses: hugoh/gh-workflows/hk-check@7d30b69fa8ffc72ed90e3ba09aa2ff977ef6328e # v1.40.21
         env:
           PINACT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -2,7 +2,12 @@
 name: rust-test
 
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      setup-command:
+        type: string
+        default: ""
+        description: "Shell command run before the tests (e.g. `mise run test:imap-server` to start a service). Skipped when empty."
 
 jobs:
   test:
@@ -19,6 +24,11 @@ jobs:
         with:
           shared-key: test
           save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Test setup
+        if: inputs.setup-command != ''
+        env:
+          SETUP_COMMAND: ${{ inputs.setup-command }}
+        run: bash -c "$SETUP_COMMAND"
       - name: Fetch CRAP baseline
         env:
           GH_TOKEN: ${{ github.token }}
