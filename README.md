@@ -4,9 +4,9 @@ Shared tooling for [hugoh](https://github.com/hugoh)'s Rust repositories (`tamis
 
 ## Copier template
 
-Templates `.cargo/config.toml`, `.cargo-crap.toml`, `clippy.toml`, `deny.toml`, `hk.pkl`, `mise.toml` (+ `mise.package.toml`, `mise.release.toml`), `biome.jsonc`, `.jscpd.json`, `.markdownlint.json`, `.ryl.toml`, `.editorconfig`, and `.github/workflows/semantic-pr.yml`.
+Templates `.cargo/config.toml`, `.cargo-crap.toml`, `clippy.toml`, `hk.pkl`, `mise.toml` (+ `mise.package.toml`, `mise.release.toml`), `biome.jsonc`, `.jscpd.json`, `.markdownlint.json`, `.ryl.toml`, `.editorconfig`, and `.github/workflows/semantic-pr.yml`.
 
-Seeded once, then owned by the repo (`_skip_if_exists`): `rust-toolchain.toml` and `.renovaterc.json`.
+Seeded once, then owned by the repo (`_skip_if_exists`): `rust-toolchain.toml`, `deny.toml` and `.renovaterc.json`. Their content tracks the repo (targets, the dependency tree's licenses and advisories), so a template would only move that data into `.copier-answers.yml`.
 
 Not templated, on purpose (too repo-specific until a third Rust project shows what varies): `.anodizer.yaml`, `cross.yml`, `pages.yml`, `mise-tasks/`, and the release jobs of `ci.yml`.
 

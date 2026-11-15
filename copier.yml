@@ -14,6 +14,7 @@ _envops:
 # reverted by `copier update`.
 _skip_if_exists:
   - rust-toolchain.toml
+  - deny.toml
   - .renovaterc.json
 
 project_name:
@@ -29,18 +30,3 @@ toolchain_targets:
   type: json
   default: ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin"]
   help: "Targets installed by rust-toolchain.toml: list of target triples"
-
-deny_targets:
-  type: json
-  default: ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin"]
-  help: "Platforms cargo-deny checks: list of target triples"
-
-deny_extra_licenses:
-  type: json
-  default: []
-  help: "SPDX licenses allowed beyond the shared base list: list of strings"
-
-deny_advisory_ignores:
-  type: json
-  default: []
-  help: "RustSec advisories to ignore: list of {id, reason} objects"
