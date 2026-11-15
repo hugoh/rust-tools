@@ -1,0 +1,36 @@
+---
+name: rust-test
+
+on:
+  workflow_call: {}
+
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+    env:
+      MISE_ENV: ci
+    steps:
+      - uses: hugoh/gh-workflows/setup@7d30b69fa8ffc72ed90e3ba09aa2ff977ef6328e # v1.40.21
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          shared-key: test
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+      - name: Fetch CRAP baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: mise run crap:fetch
+      - name: Tests and coverage
+        run: mise run ci:test
+      - name: Record CRAP baseline
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: mise run crap:baseline
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          name: crap-baseline
+          path: crap-baseline.json
+          if-no-files-found: error

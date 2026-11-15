@@ -1,0 +1,6 @@
+project_name: upd
+rust_channel: "1.100.0"
+toolchain_targets: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu, x86_64-unknown-linux-musl, aarch64-unknown-linux-musl, aarch64-apple-darwin]
+deny_targets: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu, x86_64-unknown-linux-musl, aarch64-unknown-linux-musl, aarch64-apple-darwin]
+deny_extra_licenses: []
+deny_advisory_ignores: []

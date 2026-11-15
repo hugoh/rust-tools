@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "hk.pkl, mise.toml and the mise.*.toml overlays are Copier-managed (regenerated on every `copier update` from rust-tools' template). Let Copier own tool versions instead of Renovate bumping them directly, to avoid the two racing. Covers the built-in mise manager and hk-config's custom.regex manager.",
+      "matchManagers": ["mise", "custom.regex"],
+      "matchFileNames": [
+        "hk.pkl",
+        "mise.toml",
+        "mise.package.toml",
+        "mise.release.toml"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "semantic-pr.yml's hugoh/gh-workflows pin is Copier-owned: it is bumped in rust-tools' template and reaches consumers via `copier update`.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["hugoh/gh-workflows"],
+      "matchFileNames": [".github/workflows/semantic-pr.yml"],
+      "enabled": false
+    }
+  ]
+}

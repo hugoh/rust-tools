@@ -1,0 +1,19 @@
+# DO NOT EDIT — managed by hugoh/rust-tools via copier.
+---
+name: semantic-pr
+
+on: # yamllint disable-line rule:truthy
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-caller-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semantic-pr:
+    uses: hugoh/gh-workflows/.github/workflows/semantic-pr.yml@7d30b69fa8ffc72ed90e3ba09aa2ff977ef6328e # v1.40.21
+    permissions:
+      pull-requests: read

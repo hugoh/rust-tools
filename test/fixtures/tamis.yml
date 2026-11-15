@@ -1,0 +1,11 @@
+project_name: tamis
+rust_channel: "1.100.0"
+toolchain_targets: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu, aarch64-apple-darwin]
+deny_targets: [x86_64-unknown-linux-gnu, aarch64-unknown-linux-gnu, aarch64-apple-darwin]
+deny_extra_licenses: ["Apache-2.0 WITH LLVM-exception", "AGPL-3.0-only"]
+deny_advisory_ignores:
+  - {id: RUSTSEC-2026-0370, reason: "zvariant was merged into zbus 6; secret-service (via keyring) still pins zbus 5"}
+  - {id: RUSTSEC-2026-0371, reason: "zbus_names was merged into zbus 6; secret-service (via keyring) still pins zbus 5"}
+  - {id: RUSTSEC-2023-0071, reason: "rsa (via webauthn-rs) only verifies public-key signatures here; the timing leak is in private-key operations tamis never performs"}
+  - {id: RUSTSEC-2026-0374, reason: "basic-toml is askama's build-time parser of its own config, not part of the shipped binary"}
+  - {id: RUSTSEC-2026-0372, reason: "zvariant_derive was merged into zbus 6; secret-service (via keyring) still pins zbus 5"}

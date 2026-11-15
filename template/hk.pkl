@@ -1,0 +1,37 @@
+// DO NOT EDIT — managed by hugoh/rust-tools via copier.
+amends "package://github.com/jdx/hk/releases/download/v2.11.1/hk@2.11.1#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.11.1/hk@2.11.1#/Builtins.pkl"
+import "package://github.com/hugoh/hk-config/releases/download/v3.1.3/hk-config@3.1.3#/base.pkl" as Base
+
+min_hk_version = Base.min_hk_version
+
+local linters = new Mapping<String, Step> {
+  ...Base.base
+  ...Base.shell
+  ["cargo_fmt"] = Builtins.cargo_fmt
+  ["cargo_clippy"] = (Builtins.cargo_clippy) {
+    check = "cargo clippy --all-targets --all-features -- -D warnings"
+  }
+  ["cargo_deny"] = Builtins.cargo_deny
+  ["cargo_machete"] {
+    glob = List("**/*.rs", "Cargo.toml")
+    check = "cargo machete"
+  }
+  ["duplication"] {
+    check = "jscpd"
+  }
+  ["anodizer"] {
+    check = "mise run lint:release"
+  }
+}
+
+steps = linters
+
+hooks {
+  ["pre-commit"] {
+    stash = "git"
+  }
+  ["pre-push"] {
+    steps = linters
+  }
+}

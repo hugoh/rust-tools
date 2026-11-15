@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#MISE description="Render the Copier template against each fixture and validate the output"
+set -euo pipefail
+cd "$(dirname "$0")/.."
+# Render from a plain copy of the working tree: Copier would otherwise clone git HEAD,
+# which in a colocated jj repo is not the change being edited.
+src=$(mktemp -d)
+trap 'rm -rf "$src"' EXIT
+rsync -a --exclude .git --exclude .jj --exclude .cache ./ "$src/"
+for fixture in test/fixtures/*.yml; do
+  out=$(mktemp -d)
+  uvx copier copy --defaults --overwrite --quiet --data-file "$src/$fixture" "$src" "$out"
+  if rg -n '\[\[|\[%' "$out" --glob '!*.pkl' --glob '!.copier-answers.yml'; then
+    echo "unrendered Jinja in $fixture output" >&2
+    exit 1
+  fi
+  python3 -I -c "import tomllib,sys; [tomllib.load(open(f,'rb')) for f in sys.argv[1:]]" \
+    "$out/deny.toml" "$out/rust-toolchain.toml" "$out/mise.toml"
+  python3 -I -c "import json,sys; json.load(open(sys.argv[1]))" "$out/.markdownlint.json"
+  rm -rf "$out"
+  echo "ok: $fixture"
+done

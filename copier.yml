@@ -1,0 +1,46 @@
+# Forces this literal URL into every consumer's .copier-answers.yml `_src_path`
+# so Renovate's copier manager can resolve it (see go-tools' copier.yml,
+# renovatebot/renovate#39938). Do not replace with the `gh:` shorthand.
+_min_copier_version: "9.0.0"
+_src_path: https://github.com/hugoh/rust-tools.git
+_answers_file: .copier-answers.yml
+_subdirectory: template
+_envops:
+  block_start_string: "[%"
+  block_end_string: "%]"
+  variable_start_string: "[["
+  variable_end_string: "]]"
+# Seeded once, then owned by the repo: Renovate/hand edits must not be
+# reverted by `copier update`.
+_skip_if_exists:
+  - rust-toolchain.toml
+  - .renovaterc.json
+
+project_name:
+  type: str
+  help: Project/binary name (e.g. upd)
+
+rust_channel:
+  type: str
+  default: "1.100.0"
+  help: Rust toolchain channel for the seeded rust-toolchain.toml
+
+toolchain_targets:
+  type: json
+  default: ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin"]
+  help: "Targets installed by rust-toolchain.toml: list of target triples"
+
+deny_targets:
+  type: json
+  default: ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin"]
+  help: "Platforms cargo-deny checks: list of target triples"
+
+deny_extra_licenses:
+  type: json
+  default: []
+  help: "SPDX licenses allowed beyond the shared base list: list of strings"
+
+deny_advisory_ignores:
+  type: json
+  default: []
+  help: "RustSec advisories to ignore: list of {id, reason} objects"

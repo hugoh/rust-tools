@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["github>hugoh/rust-tools:rust-renovaterc"],
+  "github-actions": {
+    "managerFilePatterns": [
+      "/(^|/)\\.github/(?:workflows|actions)/.+\\.ya?ml$/",
+      "/^template/\\.github/.+\\.ya?ml$/"
+    ]
+  },
+  "mise": {
+    "managerFilePatterns": ["**/{,.}mise{,.*}.toml"]
+  },
+  "packageRules": [
+    {
+      "description": "These pins reach consumers only once rust-tools cuts a new tag, so force fix (not chore) to make cocogitto's `cog bump --auto` release them.",
+      "matchFileNames": [
+        "template/**",
+        ".github/workflows/rust-*.yml",
+        ".github/actions/**"
+      ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "description": "Batch the template's tool pins into one monthly PR so they cut one rust-tools release and one Copier fan-out.",
+      "matchFileNames": [
+        "template/mise.toml",
+        "template/mise.package.toml",
+        "template/mise.release.toml",
+        "template/hk.pkl"
+      ],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
+      "groupName": "template dev tools",
+      "extends": ["github>hugoh/renovate-config//presets/monthly-weekend"]
+    },
+    {
+      "description": "The consumer-facing semantic-pr pin lives in the template; this repo's own copy must stay current too.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["hugoh/gh-workflows"],
+      "enabled": true
+    }
+  ]
+}

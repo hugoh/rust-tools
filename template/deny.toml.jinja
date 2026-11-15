@@ -1,0 +1,22 @@
+# DO NOT EDIT — managed by hugoh/rust-tools via copier.
+[graph]
+# The platforms [[ project_name ]] ships; others only add duplicates.
+targets = [[ deny_targets | tojson ]]
+
+[advisories]
+version = 2
+[%- if deny_advisory_ignores %]
+ignore = [
+[%- for item in deny_advisory_ignores %]
+  { id = "[[ item.id ]]", reason = "[[ item.reason ]]" },
+[%- endfor %]
+]
+[%- endif %]
+
+[licenses]
+version = 2
+allow = [[ (["MIT", "Apache-2.0", "BSD-3-Clause", "ISC", "MPL-2.0", "Unicode-3.0", "Zlib"] + deny_extra_licenses) | tojson ]]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"

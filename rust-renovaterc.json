@@ -1,0 +1,61 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":configMigration",
+    "abandonments:recommended",
+    "customManagers:githubActionsVersions",
+    "helpers:pinGitHubActionDigests",
+    "github>hugoh/renovate-config//presets/base",
+    "github>hugoh/renovate-config//presets/weekend"
+  ],
+  "packageRules": [
+    {
+      "description": "Non-major GitHub Actions bumps are grouped. Majors stay ungrouped so they keep their own window.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "description": "Cargo dependencies ship in the binary, so a bump is a `fix` and cuts a patch release.",
+      "matchManagers": ["cargo"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "groupName": "rust dependencies",
+      "semanticCommitType": "fix",
+      "semanticCommitScope": "deps"
+    },
+    {
+      "matchDatasources": ["github-runners"],
+      "groupName": "runner images"
+    },
+    {
+      "description": "Majors of shipped code stay on the monthly (first-weekend) window; tooling majors keep the weekend window.",
+      "matchManagers": ["!github-actions", "!mise", "!copier", "!pre-commit"],
+      "matchUpdateTypes": ["major"],
+      "extends": ["github>hugoh/renovate-config//presets/monthly-weekend"]
+    },
+    {
+      "description": "A rust-tools release only reaches a consumer via this Copier-update PR, as the default `chore`: the template changes are dev/CI tooling that don't alter the shipped binary. The copier datasource is a bare git repo with no release timestamps, so timestamp-optional is required or every release stays pending forever.",
+      "matchManagers": ["copier"],
+      "matchPackageNames": ["https://github.com/hugoh/rust-tools.git"],
+      "extends": [
+        "github>hugoh/renovate-config//presets/weekend",
+        "github>hugoh/renovate-config//presets/first-party-soak"
+      ],
+      "minimumReleaseAgeBehaviour": "timestamp-optional",
+      "automerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Runner images pinned in workflow matrices, which the github-actions manager does not read",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": [
+        "os: (?<depName>ubuntu)-(?<currentValue>\\d+\\.\\d+)(?:-arm)?[,}]"
+      ],
+      "datasourceTemplate": "github-runners",
+      "versioningTemplate": "docker"
+    }
+  ]
+}
