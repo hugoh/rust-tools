@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Build application"
+#MISE sources=[[ (["src/**/*.rs", "Cargo.toml", "Cargo.lock"] + build_extra_sources) | tojson ]]
+#MISE outputs=["target/release/[[ project_name ]]"]
+#MISE depends=[[ (["prebuild"] if has_prebuild else []) | tojson ]]
+# DO NOT EDIT — managed by hugoh/rust-tools via copier.
+cargo build --release

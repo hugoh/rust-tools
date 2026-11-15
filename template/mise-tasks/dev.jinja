@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Run [[ project_name ]] from source; arguments go to the binary"
+#MISE depends=[[ (["prebuild"] if has_prebuild else []) | tojson ]]
+# DO NOT EDIT — managed by hugoh/rust-tools via copier.
+cargo run -- "$@"
