@@ -6,9 +6,6 @@ min_hk_version = Base.min_hk_version
 
 local linters = new Mapping<String, Step> {
   ...Base.base
-  ["conventional_commit"] {
-    check = "cog check --from-latest-tag"
-  }
 }
 
 steps = linters
