@@ -8,6 +8,17 @@ min_hk_version = Base.min_hk_version
 local linters = new Mapping<String, Step> {
   ...Base.base
   ...Base.shell
+  // .copier-answers.yml is written by copier's own YAML serializer, which omits
+  // the trailing newline these checks expect
+  ["newlines"] = (Builtins.newlines) {
+    exclude = List(".copier-answers.yml")
+  }
+  ["ryl"] = (Builtins.ryl) {
+    exclude = List(".copier-answers.yml")
+  }
+  ["ryl_format"] = (Builtins.ryl_format) {
+    exclude = List(".copier-answers.yml")
+  }
   ["cargo_fmt"] = Builtins.cargo_fmt
   ["cargo_clippy"] = (Builtins.cargo_clippy) {
     check = "cargo clippy --all-targets --all-features -- -D warnings"
