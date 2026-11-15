@@ -18,12 +18,15 @@ jobs:
       contents: read
     env:
       MISE_ENV: ci
+      # setup-rust-toolchain defaults this to deny, which would turn rustc warnings into build
+      # failures; clippy already gates warnings.
+      CARGO_BUILD_WARNINGS: warn
     steps:
       - uses: hugoh/gh-workflows/setup@7d30b69fa8ffc72ed90e3ba09aa2ff977ef6328e # v1.40.21
-      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - uses: actions-rust-lang/setup-rust-toolchain@a188e68d0fd2bd36ad51dccb2b07ba6e75105f30 # v2.0.1
         with:
-          shared-key: test
-          save-if: ${{ github.ref == 'refs/heads/main' }}
+          cache-shared-key: test
+          cache-save-if: ${{ github.ref == 'refs/heads/main' }}
       - name: Test setup
         if: inputs.setup-command != ''
         env:

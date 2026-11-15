@@ -20,7 +20,9 @@ Answer from `test/fixtures/<repo>.yml`, review the diff (mostly the "managed" he
 
 ## Composite actions
 
-`.github/actions/rust-setup` (toolchain + cargo cache) and `.github/actions/apply-tag` (release commit and tag) are hosted here, not copied. Reference them from a repo's own `ci.yml` as `hugoh/rust-tools/.github/actions/<name>@<sha> # vX.Y.Z`. They run in the caller's workspace, so `rust-setup` still reads the caller's `rust-toolchain.toml`.
+`.github/actions/apply-tag` (release commit and tag) is hosted here, not copied. Reference it from a repo's own `ci.yml` as `hugoh/rust-tools/.github/actions/apply-tag@<sha> # vX.Y.Z`.
+
+Toolchain and cache setup is [`actions-rust-lang/setup-rust-toolchain`](https://github.com/actions-rust-lang/setup-rust-toolchain), called directly. Pass `cache-save-if: ${{ github.ref == 'refs/heads/main' }}` (its default saves from every branch) and set `CARGO_BUILD_WARNINGS: warn` in the workflow's `env:` (its `build-warnings` default is `deny`).
 
 ## Reusable workflows
 
