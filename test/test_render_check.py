@@ -4,6 +4,7 @@ Run with `mise run render-check`.
 """
 
 import json
+import os
 import shutil
 import subprocess
 import tomllib
@@ -165,3 +166,65 @@ def test_seeded_files_are_not_overwritten_but_managed_files_are(
     assert managed.read_text() == original
     for name in SEEDED:
         assert (rendered.path / name).read_text() == "owned by the repo\n", name
+
+
+def run_lint_release(
+    rendered: Rendered, tmp_path: Path, anodizer_yaml: str
+) -> subprocess.CompletedProcess[str]:
+    stubs = tmp_path / "bin"
+    stubs.mkdir()
+    stub = stubs / "anodizer"
+    stub.write_text("#!/usr/bin/env bash\nexit 0\n")
+    stub.chmod(0o755)
+    (tmp_path / ".anodizer.yaml").write_text(anodizer_yaml)
+    return subprocess.run(
+        [
+            "mise",
+            "x",
+            "yq@4.54.2",
+            "--",
+            "env",
+            f"PATH={stubs}:{os.environ['PATH']}",
+            "bash",
+            str(rendered.path / "mise-tasks" / "lint" / "release"),
+        ],
+        cwd=tmp_path,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+
+CLOUDSMITH = """cloudsmiths:
+  - organization: hugoh-oss
+    repository: {repository}
+{extra}"""
+
+
+@pytest.mark.skipif(shutil.which("mise") is None, reason="mise is not installed")
+class TestCloudsmithRetention:
+    def test_a_cloudsmith_entry_without_keep_versions_fails(
+        self, rendered: Rendered, tmp_path: Path
+    ) -> None:
+        result = run_lint_release(
+            rendered, tmp_path, CLOUDSMITH.format(repository="upd", extra="")
+        )
+        assert result.returncode != 0
+        assert "keep_versions" in result.stderr
+        assert "upd" in result.stderr
+
+    def test_a_cloudsmith_entry_with_keep_versions_passes(
+        self, rendered: Rendered, tmp_path: Path
+    ) -> None:
+        result = run_lint_release(
+            rendered,
+            tmp_path,
+            CLOUDSMITH.format(repository="upd", extra="    keep_versions: 2\n"),
+        )
+        assert result.returncode == 0, result.stderr
+
+    def test_a_config_without_cloudsmith_passes(
+        self, rendered: Rendered, tmp_path: Path
+    ) -> None:
+        result = run_lint_release(rendered, tmp_path, "project_name: x\n")
+        assert result.returncode == 0, result.stderr
