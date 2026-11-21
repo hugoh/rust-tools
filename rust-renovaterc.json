@@ -7,7 +7,7 @@
     "customManagers:githubActionsVersions",
     "helpers:pinGitHubActionDigests",
     "github>hugoh/renovate-config//presets/base",
-    "github>hugoh/renovate-config//presets/weekend"
+    "github>hugoh/renovate-config//presets/weekly"
   ],
   "packageRules": [
     {
@@ -29,17 +29,17 @@
       "groupName": "runner images"
     },
     {
-      "description": "Majors of shipped code stay on the monthly (first-weekend) window; tooling majors keep the weekend window.",
+      "description": "Majors of shipped code stay on the monthly (first-week) window; tooling majors keep the weekly window.",
       "matchManagers": ["!github-actions", "!mise", "!copier", "!pre-commit"],
       "matchUpdateTypes": ["major"],
-      "extends": ["github>hugoh/renovate-config//presets/monthly-weekend"]
+      "extends": ["github>hugoh/renovate-config//presets/monthly"]
     },
     {
       "description": "A rust-tools release only reaches a consumer via this Copier-update PR, as the default `chore`: the template changes are dev/CI tooling that don't alter the shipped binary. The copier datasource is a bare git repo with no release timestamps, so timestamp-optional is required or every release stays pending forever.",
       "matchManagers": ["copier"],
       "matchPackageNames": ["https://github.com/hugoh/rust-tools.git"],
       "extends": [
-        "github>hugoh/renovate-config//presets/weekend",
+        "github>hugoh/renovate-config//presets/weekly",
         "github>hugoh/renovate-config//presets/first-party-soak"
       ],
       "minimumReleaseAgeBehaviour": "timestamp-optional",
