@@ -228,3 +228,27 @@ class TestCloudsmithRetention:
     ) -> None:
         result = run_lint_release(rendered, tmp_path, "project_name: x\n")
         assert result.returncode == 0, result.stderr
+
+
+SHELL_LINTERS = [
+    ["shfmt", "-d", "--apply-ignore"],
+    ["shellharden", "--check"],
+    ["shellcheck"],
+]
+
+
+@pytest.mark.parametrize("linter", SHELL_LINTERS, ids=lambda cmd: cmd[0])
+def test_mise_tasks_pass_the_shell_linters(
+    rendered: Rendered, linter: list[str]
+) -> None:
+    if shutil.which(linter[0]) is None:
+        pytest.skip(f"{linter[0]} is not installed")
+    tasks = [str(task) for task in rendered.tasks()]
+    result = subprocess.run(
+        [*linter, *tasks],
+        cwd=rendered.path,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr

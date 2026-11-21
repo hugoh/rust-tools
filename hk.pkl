@@ -7,6 +7,17 @@ min_hk_version = Base.min_hk_version
 local linters = new Mapping<String, Step> {
   ...Base.base
   ...Base.python
+  ...Base.shell
+  // .jinja tasks are not shell until rendered; test/test_render_check.py lints them rendered
+  ["shellcheck"] = (Base.shell["shellcheck"]) {
+    exclude = List("**/*.jinja")
+  }
+  ["shellharden"] = (Base.shell["shellharden"]) {
+    exclude = List("**/*.jinja")
+  }
+  ["shfmt"] = (Base.shell["shfmt"]) {
+    exclude = List("**/*.jinja")
+  }
   // ty needs the test dependencies importable to resolve copier, pytest and yaml
   ["ty"] = (Builtins.ty) {
     check = "uv venv --quiet --clear --python 3.12 .cache/ty-venv && uv pip install --quiet --python .cache/ty-venv -r test/render-check-requirements.txt && ty check --python .cache/ty-venv {{files}}"
