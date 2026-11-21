@@ -30,7 +30,7 @@
       ],
       "matchUpdateTypes": ["minor", "patch", "digest", "pin"],
       "groupName": "template dev tools",
-      "extends": ["github>hugoh/renovate-config//presets/monthly-weekend"]
+      "extends": ["github>hugoh/renovate-config//presets/monthly"]
     },
     {
       "description": "The consumer-facing semantic-pr pin lives in the template; this repo's own copy must stay current too.",
