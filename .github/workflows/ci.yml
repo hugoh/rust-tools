@@ -45,8 +45,20 @@ jobs:
       - name: Render check
         run: mise run render-check
 
-  release:
+  # The single required status check, and all that release waits on.
+  ci-gate:
+    if: always()
     needs: [hk, render-check]
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
+        with:
+          jobs: ${{ toJSON(needs) }}
+
+  release:
+    needs: ci-gate
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     uses: hugoh/gh-workflows/.github/workflows/release.yml@7d30b69fa8ffc72ed90e3ba09aa2ff977ef6328e # v1.40.21
     permissions:
