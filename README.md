@@ -46,6 +46,25 @@ jobs:
 
 Calling a reusable workflow changes the check names (`hk` becomes `hk / hk`): re-run `repo-admin.sh sync <repo>` so branch protection requires the new names.
 
+## The `ci-gate` job
+
+Every repo's `ci.yml` ends its checks with a `ci-gate` job ([`re-actors/alls-green`](https://github.com/re-actors/alls-green)) over every job that must pass: `hk`, `test`, and the repo's own such as `e2e`. It is the one required status check, and the release pipeline starts behind it: the first release job (`release`, or `tag` next to `plan` and `preflight`) has `needs: ci-gate`, so nothing is tagged, published or released from a commit whose checks did not pass. A new check goes in the gate's `needs`, not in branch protection, and `repo-admin.sh sync` requires `ci-gate` in place of the jobs it covers.
+
+It lives in each repo's `ci.yml` and not in the template, because the jobs it lists are repo-specific:
+
+```yaml
+  ci-gate:
+    if: always()
+    needs: [hk, test]   # plus the repo's own checks, e.g. e2e
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - uses: re-actors/alls-green@<sha> # vX.Y.Z
+        with:
+          jobs: ${{ toJSON(needs) }}
+```
+
 ## Renovate
 
 `rust-renovaterc.json` is the shared hub config; `presets/copier-owned-files.json` keeps Renovate off files Copier owns.
